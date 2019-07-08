@@ -28,6 +28,9 @@
 #define WIDTH 640
 #define HEIGHT 640
 
+
+std::vector<unsigned char> keyPresses;
+
 color3f bgColor{0, 0, 1};
 
 void
@@ -43,8 +46,38 @@ RenderDisplay(void)
 }
 
 void
+ControlHandler(void)
+{
+    std::vector<std::string> commCalled;
+    for(uint i=0; i<keyPresses.size(); i++){
+        if(keyPresses.at(i) == 'r' || keyPresses.at(i) == 'R'){
+            commCalled.push_back("RandBgColor");
+        }
+        if(keyPresses.at(i) == 'b' || keyPresses.at(i) == 'B'){
+            commCalled.push_back("RandShipHullColor");
+        }
+        if(keyPresses.at(i) == 'a' || keyPresses.at(i) == 'A'){
+            commCalled.push_back("RandBgColor");
+        }
+        if(keyPresses.at(i) == 'd' || keyPresses.at(i) == 'D'){
+            commCalled.push_back("RandBgColor");
+        }
+        if(keyPresses.at(i) == 'w' || keyPresses.at(i) == 'W'){
+            commCalled.push_back("RandBgColor");
+        }
+        if(keyPresses.at(i) == 's' || keyPresses.at(i) == 'S'){
+            commCalled.push_back("RandBgColor");
+        }
+    }
+
+    fflush(stdout);
+}
+
+void
 UpdateScreen(GLint time)
 {
+    ControlHandler();
+
     glutPostRedisplay();
     glutTimerFunc(time, UpdateScreen, time);
 }
@@ -60,14 +93,19 @@ RandomizeBackgroundColor(void)
 }
 
 void
-MouseEvent(int button, int state, int posx, int posy)
+KeyboardDownEvent(unsigned char key, int, int)
 {
+    keyPresses.push_back(key);
 }
 
 void
-KeyboardEvent(unsigned char key, int, int)
+KeyboardUpEvent(unsigned char key, int, int)
 {
-    if(key == )
+    for(uint i=0; i<keyPresses.size(); i++){
+        if(keyPresses.at(i) == key){
+            keyPresses.erase(keyPresses.begin()+i);
+        }
+    }
 }
 
 void
@@ -82,8 +120,8 @@ Init(void)
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
 
     glutDisplayFunc(RenderDisplay);
-    glutMouseFunc(MouseEvent);
-    glutKeyboardFunc(KeyboardEvent);
+    glutKeyboardFunc(KeyboardDownEvent);
+    glutKeyboardUpFunc(KeyboardUpEvent);
     gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0);
 
     UpdateScreen(1000/120);
@@ -101,7 +139,7 @@ main(int argc, char ** argv)
     glutCreateWindow("TUGAS 4 GRAFKOM");
 
     Init();
-
     glutMainLoop();
+
     return 0;
 }
