@@ -54,23 +54,27 @@ ControlHandler(void)
             commCalled.push_back("RandBgColor");
         }
         if(keyPresses.at(i) == 'b' || keyPresses.at(i) == 'B'){
-            commCalled.push_back("RandShipHullColor");
+            commCalled.push_back("RandHullColor");
         }
         if(keyPresses.at(i) == 'a' || keyPresses.at(i) == 'A'){
-            commCalled.push_back("RandBgColor");
+            commCalled.push_back("KapalGerakKiri");
         }
         if(keyPresses.at(i) == 'd' || keyPresses.at(i) == 'D'){
-            commCalled.push_back("RandBgColor");
+            commCalled.push_back("KapalGerakKanan");
         }
         if(keyPresses.at(i) == 'w' || keyPresses.at(i) == 'W'){
-            commCalled.push_back("RandBgColor");
+            commCalled.push_back("ZoomIn");
         }
         if(keyPresses.at(i) == 's' || keyPresses.at(i) == 'S'){
-            commCalled.push_back("RandBgColor");
+            commCalled.push_back("ZoomOut");
         }
     }
 
-    fflush(stdout);
+    for(uint i=0; i<commCalled.size(); i++){
+        std::cout << commCalled.at(i) << " ";
+        fflush(stdout);
+    }
+    std::cout << "                     \r";
 }
 
 void
