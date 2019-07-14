@@ -3,7 +3,7 @@
 
 #include "common.hh"
 
-void RandomiseShipHullColor(void);
+void RandomizeShipHullColor(void);
 void DrawShip(void);
 
 #endif

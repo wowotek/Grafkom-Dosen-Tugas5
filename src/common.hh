@@ -24,6 +24,9 @@ typedef vec3f color3f;
 typedef std::vector<vec2f> verts2f;
 typedef std::vector<vec3f> verts3f;
 
+typedef std::vector<verts2f> frame;
+typedef std::vector<frame> frames;
+
 inline void
 DrawVertices2f(verts2f vertices, unsigned int polymode)
 {

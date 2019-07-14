@@ -28,14 +28,16 @@
 #define WIDTH 640
 #define HEIGHT 640
 
-
 std::vector<unsigned char> keyPresses;
 
 color3f bgColor{0, 0, 1};
+double translationTracker = 0;
+double scale = 1;
 
 void
 RenderDisplay(void)
 {
+    glMatrixMode(GL_PROJECTION);
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(unpack3(bgColor), 1);
     glLineWidth(2);
@@ -48,33 +50,25 @@ RenderDisplay(void)
 void
 ControlHandler(void)
 {
-    std::vector<std::string> commCalled;
+    glMatrixMode(GL_PROJECTION);
     for(uint i=0; i<keyPresses.size(); i++){
-        if(keyPresses.at(i) == 'r' || keyPresses.at(i) == 'R'){
-            commCalled.push_back("RandBgColor");
-        }
-        if(keyPresses.at(i) == 'b' || keyPresses.at(i) == 'B'){
-            commCalled.push_back("RandHullColor");
-        }
         if(keyPresses.at(i) == 'a' || keyPresses.at(i) == 'A'){
-            commCalled.push_back("KapalGerakKiri");
+            glTranslatef(-0.01, 0, 0);
+            translationTracker -= 0.01;
         }
         if(keyPresses.at(i) == 'd' || keyPresses.at(i) == 'D'){
-            commCalled.push_back("KapalGerakKanan");
+            glTranslatef(0.01, 0, 0);
+            translationTracker += 0.01;
         }
         if(keyPresses.at(i) == 'w' || keyPresses.at(i) == 'W'){
-            commCalled.push_back("ZoomIn");
+            glScalef(1.01, 1.01, 0);
+            scale += 0.01;
         }
         if(keyPresses.at(i) == 's' || keyPresses.at(i) == 'S'){
-            commCalled.push_back("ZoomOut");
+            glScalef(0.99, 0.99, 0);
+            scale -= 0.01;
         }
     }
-
-    for(uint i=0; i<commCalled.size(); i++){
-        std::cout << commCalled.at(i) << " ";
-        fflush(stdout);
-    }
-    std::cout << "                     \r";
 }
 
 void
@@ -84,22 +78,49 @@ UpdateScreen(GLint time)
 
     glutPostRedisplay();
     glutTimerFunc(time, UpdateScreen, time);
+
+    // rumus :
+    // y = x - 2.45
+    // dimana :
+    //      x = scale
+    //      y = left_bound
+    //     -y = right_bound    
+
+    if(translationTracker < (scale - 2.45)){
+        glMatrixMode(GL_PROJECTION);
+        glTranslatef(-((scale - 2.45) * 2), 0, 0);
+        translationTracker -= (scale - 2.45) * 2;
+    } else if (translationTracker > -(scale - 2.45)) {
+        glMatrixMode(GL_PROJECTION);
+        glTranslatef(((scale - 2.45) * 2), 0, 0);
+        translationTracker += (scale - 2.45) * 2;
+    }
+
+    std::cout << "s: " << scale  << " | "
+              << "l: " << translationTracker << "                \r";
+    fflush(stdout);
 }
 
 void
 RandomizeBackgroundColor(void)
 {
     bgColor = color3f{
-        (float)((rand() % 101)/100),
-        (float)((rand() % 101)/100),
-        (float)((rand() % 101)/100)
+        (float)(rand() % 101) / 100,
+        (float)(rand() % 101) / 100,
+        (float)(rand() % 101) / 100
     };
 }
 
 void
 KeyboardDownEvent(unsigned char key, int, int)
 {
-    keyPresses.push_back(key);
+    if(key == 'r' || key == 'R'){
+        RandomizeBackgroundColor();
+    } else if(key == 'b' || key == 'B'){
+        RandomizeShipHullColor();
+    } else {
+        keyPresses.push_back(key);
+    }
 }
 
 void
@@ -128,7 +149,7 @@ Init(void)
     glutKeyboardUpFunc(KeyboardUpEvent);
     gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0);
 
-    UpdateScreen(1000/120);
+    UpdateScreen(1000/60);
 
     glPointSize(5);
 }
