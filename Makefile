@@ -1,6 +1,6 @@
-CC 		= g++
+CC 	= g++
 CFLAGS 	= -W -Wall -Wextra
-DEPS = -lGL -lGLU -lglut
+DEPS 	= -lopengl32 -lglu32 -lfreeglut
 
 EXE = tugas5.exec
 
@@ -18,10 +18,10 @@ build_folder:
 	@mkdir ${BIN}/
 
 scene.o: src/scene.cc src/scene.hh
-	${CC} ${CFLAGS} -c src/scene.cc -o ${O}/scene.o
+	${CC} ${CFLAGS} -c src/scene.cc -o ${O}/scene.o -I"C:\\MinGW\\include"
 
 main.o: src/main.cc
-	${CC} ${CFLAGS} -c src/main.cc -o ${O}/main.o
+	${CC} ${CFLAGS} -c src/main.cc -o ${O}/main.o -I"C:\\MinGW\\include"
 
 ${EXE}: scene.o main.o
-	${CC} ${CFLAGS} -O3 ${O}/scene.o ${O}/main.o ${DEPS} -o ${BIN}/${EXE}
+	${CC} ${CFLAGS} -O3 ${O}/scene.o ${O}/main.o ${DEPS} -o ${BIN}/${EXE} -L"C:\\MinGW\lib" -Wl,--subsystem,windows

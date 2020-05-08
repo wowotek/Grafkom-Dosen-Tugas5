@@ -18,6 +18,8 @@
 
 #include <iostream>
 
+#include "common.hh"
+
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
@@ -44,14 +46,14 @@ RenderDisplay(void)
 
     DrawShip();
 
-    glutSwapBuffers();
+    glFlush();
 }
 
 void
 ControlHandler(void)
 {
     glMatrixMode(GL_PROJECTION);
-    for(uint i=0; i<keyPresses.size(); i++){
+    for(unsigned int i=0; i<keyPresses.size(); i++){
         if(keyPresses.at(i) == 'a' || keyPresses.at(i) == 'A'){
             glTranslatef(-0.01, 0, 0);
             translationTracker -= 0.01;
@@ -96,8 +98,8 @@ UpdateScreen(GLint time)
         translationTracker += (scale - 2.45) * 2;
     }
 
-    std::cout << "s: " << scale  << " | "
-              << "l: " << translationTracker << "                \r";
+    // std::cout << "s: " << scale  << " | "
+        //   << "l: " << translationTracker << std::endl;
     fflush(stdout);
 }
 
@@ -119,6 +121,12 @@ KeyboardDownEvent(unsigned char key, int, int)
     } else if(key == 'b' || key == 'B'){
         RandomizeShipHullColor();
     } else {
+        for(unsigned int i=0; i<keyPresses.size(); i++){
+            if(keyPresses.at(i) == key){
+                return;
+            }
+        }
+
         keyPresses.push_back(key);
     }
 }
@@ -126,24 +134,18 @@ KeyboardDownEvent(unsigned char key, int, int)
 void
 KeyboardUpEvent(unsigned char key, int, int)
 {
-    for(uint i=0; i<keyPresses.size(); i++){
+    for(unsigned int i=0; i<keyPresses.size(); i++){
+	    std::cout << keyPresses.at(i) << " " << keyPresses.size();
         if(keyPresses.at(i) == key){
             keyPresses.erase(keyPresses.begin()+i);
         }
     }
+    std::cout << std::endl;
 }
 
 void
 Init(void)
 {
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-
-    glutSetOption(GLUT_MULTISAMPLE, 16);
-
-    glEnable(GL_MULTISAMPLE);
-    glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
-
     glutDisplayFunc(RenderDisplay);
     glutKeyboardFunc(KeyboardDownEvent);
     glutKeyboardUpFunc(KeyboardUpEvent);
@@ -158,10 +160,9 @@ int
 main(int argc, char ** argv)
 {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_MULTISAMPLE);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA | GLUT_MULTISAMPLE);
     glutInitWindowSize(WIDTH, HEIGHT);
-    glutInitWindowPosition(2500, 240);
-    glutCreateWindow("TUGAS 4 GRAFKOM");
+    glutCreateWindow("UJIAN ASDOS");
 
     Init();
     glutMainLoop();
